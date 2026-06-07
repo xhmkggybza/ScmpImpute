@@ -14,7 +14,7 @@ import copy
 def NoName(data, args, device, classifier_weight=0.9):
     start_time = time.time()
 
-    # 预聚类，用于后续模型的标签
+    # Pre-clustering, used for labels in subsequent models
     listResult, adj, edgeList = cluster(data, n_pca_components=20, byVar = False, random_pca=True, graphType=args.prunetype, para=args.knn_distance + ':' + str(
                              args.k), adjTag=True, resolution=args.resolution)
 
@@ -30,17 +30,16 @@ def NoName(data, args, device, classifier_weight=0.9):
     print('Total Cluster Number: ' + str(len(set(listResult))))
 
 
-    # For iteration studies  (模型的收敛性验证)
-    G0 = nx.Graph()  # 空的无向图对象
-    G0.add_weighted_edges_from(edgeList)    # 构造图
+    # For iteration studies
+    G0 = nx.Graph()  
+    G0.add_weighted_edges_from(edgeList)
     nodelist = list(range(data.shape[0]))
-    nlG0 = nx.normalized_laplacian_matrix(G0, nodelist)   # 归一化拉普拉斯矩阵（稀疏形式）
+    nlG0 = nx.normalized_laplacian_matrix(G0, nodelist)
     # set iteration criteria for converge
     adjOld = nlG0
-    # set celltype criteria for converge   细胞类型标准
+    # set celltype criteria for converge   
     listResultOld = [1 for i in range(data.shape[0])]
 
-    # 模型建立
     model = Cell2CellwithAuto(data.shape[1], hidden_size=args.hidden_size, dropout_rate=args.dropout_rate,
                               n_clusters=len(set(listResult)), num_attention_heads=args.Num_attention_heads,
                               attention_probs_dropout_prob=args.attention_probs_dropout_prob,
@@ -57,8 +56,8 @@ def NoName(data, args, device, classifier_weight=0.9):
                                                      cycle_momentum=False)
 
     data_raw = copy.deepcopy(data)
-    # 模型初始化参数保存
-    ptfileStart = args.outputDir +'Splatter1_EMtrainingStart.pt'  # 模型保存路径
+    
+    ptfileStart = args.outputDir +'Splatter1_EMtrainingStart.pt'
     if args.debugMode == 'savePrune' or args.debugMode == 'noDebug':
         # store parameter
         stateStart = {
@@ -71,12 +70,7 @@ def NoName(data, args, device, classifier_weight=0.9):
 
     for bigepoch in range(0, args.EM_iteration):
 
-        # 每个迭代重新初始化参数
-        #stateStart = torch.load(ptfileStart)
-        #model.load_state_dict(stateStart['state_dict'])
-        #optimizer.load_state_dict(stateStart['optimizer'])
 
-        # 将原始数据转换为tensor
         data_epoch = torch.from_numpy(data).to(device)
 
 
@@ -110,7 +104,7 @@ def NoName(data, args, device, classifier_weight=0.9):
 
             loss.backward()
             optimizer.step()
-            optim_scheduler.step()  # 学习率调整
+            optim_scheduler.step()  
 
             if epoch % 10 == 0:
                 print('Train Epoch: {}, \tLoss: {:.6f}'.format(
@@ -120,13 +114,12 @@ def NoName(data, args, device, classifier_weight=0.9):
         with torch.no_grad():
             CG, classfication_result = model(data_epoch)
 
-        CGRecon = CG.detach().cpu().numpy()   # 把自动编码器得到的插补结果，关掉梯度，放入cpu再转化为numpy格式
+        CGRecon = CG.detach().cpu().numpy()   
         # rescale data
 
-        # 通过矩阵补全进行插补
-        MCRecon = lowRank_Approximation(data)  # 原始噪声数据或者每次完整迭代1次的数据作为输入
+        MCRecon = lowRank_Approximation(data)  
 
-        # 细胞特异性结构权重融合插补矩阵
+        # Cell-specific structural weighted interpolation matrix
         X_recon_list = []
         X_recon_list.append(CGRecon)
         X_recon_list.append(MCRecon)
@@ -152,7 +145,7 @@ def NoName(data, args, device, classifier_weight=0.9):
         # Iteration usage
         # If not only use 'celltype', we have to use graph change
         # The problem is it will consume huge memory for giant graphs
-        if not args.converge_type == 'celltype':  # 收敛条件类型
+        if not args.converge_type == 'celltype': 
             Gc = nx.Graph()
             Gc.add_weighted_edges_from(edgeList)
             adjGc = nx.adjacency_matrix(Gc)
