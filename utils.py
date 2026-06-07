@@ -73,16 +73,13 @@ def loadscExpression(csvFilename, sparseMode=True):
 
     return matrix, genelist, celllist
 
-# 函数功能，将矩阵中的一部分非零值反转为0值，并返回一个元组
-# X_train 返回反转过后的表达值矩阵
-# index_pair_train 原表达矩阵中非零值的索引
-# masking_idx_train 从原表达矩阵中非零值的索引中选择非零值的索引
+
 def mask(data_train, masked_prob,seed):
     index_pair_train = np.where(data_train != 0)
     np.random.seed(seed)
     masking_idx_train = np.random.choice(index_pair_train[0].shape[0], int(index_pair_train[0].shape[0] * masked_prob), replace = False)
     #to retrieve the position of the masked: data_train[index_pair_train[0][masking_idx], index_pair[1][masking_idx]]
-    X_train = copy.deepcopy(data_train)   # 深度复制，对新生成的数据的任何改变不会影响原数据
+    X_train = copy.deepcopy(data_train)   
     X_train[index_pair_train[0][masking_idx_train], index_pair_train[1][masking_idx_train]] = 0
     return X_train, index_pair_train, masking_idx_train
 
@@ -114,20 +111,16 @@ def cluster(data, n_pca_components, byVar = False, random_pca=True, graphType = 
     else:
         resolution = float(resolution)
 
-    # 使用K-means 进行预聚类，聚类数由Louvain算法确定
-    # adj 邻接矩阵
-    # edgeList 邻接表
+    # K-means was used for pre-clustering, and the number of clusters was determined by the Louvain algorithm.
     adj, edgeList = generateAdj(pca_projected_data, graphType = graphType, para = para, adjTag = adjTag)
-    # 根据图关系进行Louvain 聚类确认聚类数目
     if NeedLouvain:
         listResult, size = generateLouvainCluster(edgeList, data.shape[0])
         k = len(np.unique(listResult))
         print('Louvain cluster: ' + str(k))
         k = int(k * resolution) if int(k * resolution) >= 3 else 2
 
-    # 根据zOut使用KMeans算法聚为指定数量的类
     clustering = KMeans(n_clusters=k, random_state=0).fit(pca_projected_data)
-    listResult = clustering.labels_  # 将每个样本所属的簇标签存放在listresult
+    listResult = clustering.labels_  
 
     return listResult, adj, edgeList
 
@@ -135,7 +128,7 @@ def cluster(data, n_pca_components, byVar = False, random_pca=True, graphType = 
     #kmeans = KMeans(n_clusters=self.n_cluster, random_state=1).fit( \
     #    StandardScaler().fit_transform(pcs))
     #clustering_label = kmeans.labels_
-    #self.dummy_label = to_categorical(clustering_label)  # 将整型的聚类标签转换为one-hot编码格式
+    #self.dummy_label = to_categorical(clustering_label)  
 
 
 
@@ -168,7 +161,7 @@ def plot_pca_variance_explained(data, n_components=30,
     pca.fit(data)
 
     fig, ax = get_fig(fig=fig, ax=ax)
-    # pca.explained_variance_ratio_ 各个主成分的解释方差比率
+    # pca.explained_variance_ratio_ 
     plt.plot(np.multiply(np.cumsum(pca.explained_variance_ratio_), 100))
     plt.ylim(ylim)
     plt.xlim((0, n_components))
@@ -195,23 +188,20 @@ def generateLouvainCluster(edgeList, nodecount):
     """
 
     Gtmp = nx.Graph()
-    # 权重为0的边忽视掉
-    Gtmp.add_weighted_edges_from(edgeList) # 将带权重的边添加到图中。edgeList 应该是一个列表，每个元素是一个三元组，表示一条边及其权重。三元组的格式通常是 (节点1, 节点2, 权重)。
+    Gtmp.add_weighted_edges_from(edgeList)
     nodelist = list(range(nodecount))
     W = nx.adjacency_matrix(Gtmp, nodelist)
     W = W.todense()
     graph = Graph.Weighted_Adjacency(
-        W.tolist(), mode=ADJ_UNDIRECTED, attr="weight", loops=False)  # 创建一个加权无向图
-    # graph.es['weight']： 获取图中所有边的权重
-    # graph.community_multilevel : 这是 igraph 中 Louvain 方法的实现，用于执行社区检测。
-    # return_levels=False: 这个参数表示不返回多级层次结构的社区划分结果。如果设置为 True，则会返回多个层次的社区划分结果，可以用于分析社区的稳定性或者进行更细粒度的分析。
-    # 执行这段代码将会对图进行社区检测，并将节点划分为若干个社区。louvain_partition 将是一个列表，其中每个元素表示一个社区，每个社区又是一个包含节点索引的列表。
+        W.tolist(), mode=ADJ_UNDIRECTED, attr="weight", loops=False) 
+
+    # Executing this code will perform community detection on the graph and divide the nodes into several communities. 
+    # `louvain_partition` will be a list where each element represents a community, and each community is a list containing node indices.
     louvain_partition = graph.community_multilevel(
         weights=graph.es['weight'], return_levels=False)
-    size = len(louvain_partition)  # 通过简单的Louvain社区检测将图中节点分为了几个簇
+    size = len(louvain_partition)  
     hdict = {}
     count = 0
-    # 构建一个词典hdict，key是节点，value 是 节点对应的簇
     for i in range(size):
         tlist = louvain_partition[i]
         for j in range(len(tlist)):
@@ -228,7 +218,7 @@ def trimClustering(listResult, minMemberinCluster=5, maxClusterNumber=30):
     '''
     If the clustering numbers larger than certain number, use this function to trim. May have better solution
     '''
-    numDict = {}  # 统计每个簇包含多少个细胞
+    numDict = {}  
     for item in listResult:
         if not item in numDict:
             numDict[item] = 0
