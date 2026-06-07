@@ -112,13 +112,9 @@ parser.add_argument('--dropout_rate', type=float, default=0.1,
 
 
 args = parser.parse_args()
-args.cuda = not args.no_cuda and torch.cuda.is_available()    # 是否采用gpu训练
-args.sparseMode = not args.nonsparseMode                      # 使用采用稀疏矩阵存储数据
+args.cuda = not args.no_cuda and torch.cuda.is_available()    
+args.sparseMode = not args.nonsparseMode                      
 
-# TODO
-# As we have lots of parameters, should check args
-
-# torch.manual_seed(args.seed)  # 设置随机种子
 set_seed(args.seed)
 device = torch.device("cuda" if args.cuda else "cpu")
 print('Using device:'+str(device))
@@ -126,64 +122,23 @@ print('Using device:'+str(device))
 if not os.path.exists(args.outputDir):
     os.makedirs(args.outputDir)
 
-# load scRNA in csv   加载原始表达数据集
+# load scRNA in csv
 print('---0:00:00---scRNA starts loading.')
 
-data = pd.read_csv(args.datasetDir+args.datasetName, index_col=0).values.astype(np.float32)   # Splatter生成的数据集
-# generate noise data
-data_noise = pd.read_csv(args.datasetDir+'Splatter1/counts.csv', index_col=0).values.astype(np.float32)  # 将一部分数据掩码为0，也就是添加完dropout之后的数据集
+data = pd.read_csv(args.datasetDir+args.datasetName, index_col=0).values.astype(np.float32)   
+data_noise = pd.read_csv(args.datasetDir+'Splatter1/counts.csv', index_col=0).values.astype(np.float32)  
 # cell info
 cellinfo = pd.read_csv(args.datasetDir+'Splatter1/cellinfo.csv', index_col=0)
 Y = cellinfo['Group'].values #cell type label
 unique_class = np.unique(Y)
 KK = len(unique_class) #number of cell groups
 ncell,ngene = data.shape[0],data.shape[1]
-print("细胞数量，基因数量，细胞类别数量，raw零值所占比例，true零值所占比例",ncell,ngene,KK,np.mean(data_noise==0),np.mean(data==0))
+print("Number of cells, number of genes, number of cell types, percentage of raw zero values, percentage of true zero values.",ncell,ngene,KK,np.mean(data_noise==0),np.mean(data==0))
 # get information about the data where was set to zero
 index1, index2 = np.where(data_noise != data)
-
-data_noise_norm = take_norm(data_noise)
-data_norm = take_norm(data)
-
-#data_noise = generate_noise(data, args, drop_rate=args.generate_dropout_rate)
-#X = np.copy(data_noise)
 X = np.copy(data_noise)
 
-
-# 查看未添加噪音时，添加噪音后的聚类效果
-PCA_raw = PCA(n_components=50).fit_transform(data_norm)
-tsne_raw = TSNE(n_components=2).fit_transform(PCA_raw)
-PCA_noise = PCA(n_components=50).fit_transform(data_noise_norm)
-tsne_noise = TSNE(n_components=2).fit_transform(PCA_noise)
-
-fig = plt.figure(figsize=(8, 4))
-fig.add_subplot(121)
-for i in range(KK):
-    plt.scatter(tsne_raw[Y == unique_class[i], 0],
-                tsne_raw[Y == unique_class[i], 1],
-                s=10, label=unique_class[i])
-plt.title('Without Dropout')
-
-fig.add_subplot(122)
-for i in range(KK):
-    plt.scatter(tsne_noise[Y == unique_class[i], 0],
-                tsne_noise[Y == unique_class[i], 1],
-                s=10, label=unique_class[i])
-plt.title('With Dropout')
-plt.show()
-
-# Pre_cluster
-# 使用PCA之后的数据进行预聚类，可以使用 PCA 图来展示前几个 PCA 成分解释的方差百分比，这里是累计解释方差，第几个值代表前几个主成分的累计解释方差
-fig, ax = plot_pca_variance_explained(X, n_components=50, random=True)
-plt.show()
-
 data_recon, start_time = NoName(X, args, device, args.classifier_weight)
-
-# 过滤
-#if not args.noPostprocessingTag:
-#    data_recon[data_recon < args.postThreshold] = 0.0
-
-#data_recon = Rescale(X, data_recon, rescale_percent=99)
 
 print('---' + str(datetime.timedelta(seconds=int(time.time() - start_time))
                   ) + '---All iterations finished, start output results.')
@@ -203,31 +158,6 @@ print('dropout data L1: {:.4f}, imputed data L1: {:.4f}'.
 print('dropout data RMSE: {:.4f}, imputed data RMSE: {:.4f}'.
       format(RMSE(data_noise[index1, index2], data[index1, index2]),
              RMSE(data_recon[index1, index2], data[index1, index2])))
-
-
-# 返回原数据中真零的索引
-zero_X,zero_Y = np.where(data==0)
-# 计算假的0回复均值
-print("mean of recon dropout 0:", np.mean(data_recon[index1, index2]))
-# 计算真0的回复均值
-print("mean of recon true 0:", np.mean(data_recon[zero_X, zero_Y]))
-
-
-# 查看聚类效果
-PCA_imp = PCA(n_components=50).fit_transform(data_recon)
-tsne_imp = TSNE(n_components=2).fit_transform(PCA_imp)
-
-fig = plt.figure(figsize=(4,4))
-for i in range(KK):
-    plt.scatter(tsne_imp[Y==unique_class[i],0],
-                tsne_imp[Y==unique_class[i],1],
-                s=10,label = unique_class[i] )
-plt.title('Imputation by Noname')
-plt.xticks([],[])
-plt.yticks([],[])
-plt.xlabel('tSNE1')
-plt.ylabel('tSNE2')
-
 
 
 
