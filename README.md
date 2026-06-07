@@ -8,10 +8,16 @@ a cell-specific optimal trade-off to generate the final imputed matrix. Experime
 many state-of-the-art scRNA-seq imputation methods in terms of both quantitative evaluation metrics and downstream analysis performance.
 
 
+Quick Start & Usage
 
+To reproduce the experimental results on the Splatter simulated dataset, please follow the steps below:
 
+### 1. Prepare the Dataset
+Unzip the example dataset `Splatter1.zip` into the root directory of this repository (or your designated data folder):
 
-
+### 2. Run the Imputation Model
+Execute the main script to start the training and evaluation process:
+python Main_Splatter1.py
 
 requirements:
 absl-py==2.1.0
