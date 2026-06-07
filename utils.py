@@ -240,50 +240,6 @@ def trimClustering(listResult, minMemberinCluster=5, maxClusterNumber=30):
     return listResult
 
 
-def generate_noise(X, args, drop_rate=0.1):
-    """
-    X: original testing set
-    ========
-    returns:
-    X_noise: copy of X with zeros
-    """
-    X_noise = np.copy(X)
-    ncell = X.shape[0]
-    ngene = X.shape[1]
-
-    if args.noise_type == "dropout":
-        i, j = np.nonzero(X_noise)  # 返回矩阵中非零值的行坐标，列坐标
-
-        # replace = False  表示选择过程中不允许重复选择相同的索引。
-        ix = np.random.choice(range(len(i)), int(
-            np.floor(drop_rate * len(i))), replace=False)
-        X_noise[i[ix], j[ix]] = 0.0
-
-        return X_noise, i, j, ix
-    if args.noise_type == "Gaussian":
-        noise = np.random.normal(0, 6, (ncell, ngene))
-        noise = noise - np.mean(noise)  # zero centered
-        noise = np.round(noise)
-        X_noise = X_noise + noise
-        X_noise[X_noise < 0] = 0
-
-        return X_noise
-    if args.noise_type == "Uniform":
-        noise = np.random.randint(-8, 8, size=(ncell, ngene))
-        X_noise = X_noise + noise
-        X_noise[X_noise < 0] = 0
-
-        return X_noise
-    if args.noise_type == "Gamma":
-        noise = np.random.randint(0.5, 12, (ncell, ngene))
-        noise = noise - np.mean(noise)
-        noise = np.round(noise)
-        X_noise = X_noise + noise
-        X_noise[X_noise < 0] = 0
-
-        return X_noise
-
-
 def pearson_corr(imputed_data, original_data):
     Y = original_data
     fake_Y = imputed_data
@@ -305,7 +261,7 @@ def take_norm(data, cellwise_norm=True, log1p=True):
     if cellwise_norm:
         libs = data.sum(axis=1)
         norm_factor = np.diag(np.median(libs) / libs)
-        data_norm = np.dot(norm_factor, data_norm)             # 矩阵乘法，库大小标准化
+        data_norm = np.dot(norm_factor, data_norm)     
 
     if log1p:
         data_norm = np.log2(data_norm + 1.)
@@ -313,20 +269,13 @@ def take_norm(data, cellwise_norm=True, log1p=True):
 
 
 def Rescale(data, data_new, rescale_percent):
-    '''
-    rescale data
-    :param data: 插补后张量
-    :param rescale_percent: 分位数
-    :return:
-    '''
-
 
     if len(np.where(data_new < 0)[0]) > 0:
-        print('还他妈的有负值')
+        print('Negative values ​​exist!')
         data_new[data_new < 0] = 0.0
 
-    M99 = np.percentile(data, rescale_percent, axis=0)  # 计算每一列的99分位数
-    M100 = data.max(axis=0)  # 每一列的最大值
+    M99 = np.percentile(data, rescale_percent, axis=0)  # 
+    M100 = data.max(axis=0)  
     indices = np.where(M99 == 0)[0]
     M99[indices] = M100[indices]
     M99_new = np.percentile(data_new, rescale_percent, axis=0)
@@ -334,7 +283,6 @@ def Rescale(data, data_new, rescale_percent):
     indices = np.where(M99_new == 0)[0]
     M99_new[indices] = M100_new[indices]
     max_ratio = np.divide(M99, M99_new)
-    # 重缩放, 将每一列的比列（一个行向量），扩展为与data相同维度，就是沿着行方向（纵向）一直复制（每一列的数都完全一样），然后逐元素相乘。
     data_new = np.multiply(data_new, np.tile(max_ratio, (len(data), 1)))
     return data_new
 
@@ -358,10 +306,10 @@ class scDataset(Dataset):
 
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
-            idx = idx.tolist()  # 转化为列表
+            idx = idx.tolist()  
 
         sample = self.features[idx, :]
-        if type(sample) == sp.lil_matrix:    # 是否为稀疏矩阵
+        if type(sample) == sp.lil_matrix:    
             sample = torch.from_numpy(sample.toarray())
         else:
             sample = torch.from_numpy(sample)
