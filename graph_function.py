@@ -63,15 +63,13 @@ def generateAdj(featureMatrix, graphType='KNNgraph', para = None, parallelLimit 
             parawords = para.split(':')
             distanceType = parawords[0]
             k = int(parawords[1])
-        edgeList = calculateKNNgraphDistanceMatrixStatsSingleThread(featureMatrix, distanceType=distanceType, k=k)
-        # edgeList 3 列的一个列表（行坐标，纵坐标，权重），其实就是个邻接表。
+        edgeList = calculateKNNgraphDistanceMatrixStatsSingleThread(featureMatrix, distanceType=distanceType, k=k)。
     else:
         print('Should give graphtype')
 
     if adjTag:
         graphdict = edgeList2edgeDict(edgeList, featureMatrix.shape[0])
-        # 得到一个词典，每一个节点一次作为key，value为和key节点组成边的节点的信息
-        adj = nx.adjacency_matrix(nx.from_dict_of_lists(graphdict)) # 根据词典获得邻接矩阵
+        adj = nx.adjacency_matrix(nx.from_dict_of_lists(graphdict)) 
     
     return adj, edgeList
 
@@ -200,7 +198,7 @@ def calculateThresholdgraphDistanceMatrix(featureMatrix, distanceType='euclidean
     edgeList=[]
 
     for i in np.arange(distMat.shape[0]):
-        indexArray = np.where(distMat[i,:]>threshold)   # 这里得到的数据应该是2维的
+        indexArray = np.where(distMat[i,:]>threshold)   
         for j in indexArray[0]:
             edgeList.append((i,j))
     
@@ -285,10 +283,10 @@ def calculateKNNgraphDistanceMatrixStatsSingleThread(featureMatrix, distanceType
     for i in np.arange(featureMatrix.shape[0]):
         if i%10000==0:
             print('Start pruning '+str(i)+'th cell, cost '+str(time.time()-p_time)+'s')
-        tmp=featureMatrix[i,:].reshape(1,-1)   # 拿到第i个细胞的表征，然后改变为2维的，一个一行的矩阵
-        distMat = distance.cdist(tmp,featureMatrix, distanceType)  # 计算该表征与其他所有细胞表征的距离，包括自身
-        res = distMat.argsort()[:k+1]  # 拿到距离最近的K+1个的索引位置，（+1 是因为自身也在里面，这里是想取消自环）
-        tmpdist = distMat[0,res[0][1:k+1]]  # 取消自环，不要自身和自身的距离
+        tmp=featureMatrix[i,:].reshape(1,-1)   
+        distMat = distance.cdist(tmp,featureMatrix, distanceType)  
+        res = distMat.argsort()[:k+1] 
+        tmpdist = distMat[0,res[0][1:k+1]]  
         boundary = np.mean(tmpdist)+np.std(tmpdist)
         for j in np.arange(1,k+1):
             # TODO: check, only exclude large outliners
@@ -486,9 +484,8 @@ def edgeList2edgeDict(edgeList, nodesize):
             tmplist = []
         tmplist.append(end2)
         graphdict[end1]= tmplist
-    # 得到一个词典，每一个节点一次作为key，value为和key节点组成边的节点的信息
 
-    #check and get full matrix   查看是否存在节点是孤立的
+    #check and get full matrix   
     for i in range(nodesize):
         if i not in tdict:
             graphdict[i]=[]
