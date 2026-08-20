@@ -10,11 +10,11 @@ many state-of-the-art scRNA-seq imputation methods in terms of both quantitative
 <img width="8192" height="8192" alt="Figure_1" src="https://github.com/user-attachments/assets/b7465530-f3e0-4d46-adb7-ff4f5c8a43f5" />
 
 ## Script introduction
-Main_Splatter1.py: The experiment run entry, responsible for reading data, receiving results, and calculating metrics
-NoNameFramework_CGAutoMerge.py: Experiment framework flow code
-NoNameModel2.py: Specific model structure code
-graph_function.py, utils.py: Various function scripts
-requirements.txt: Experimental Environment Configuration Information
+- 'Main_Splatter1.py': The experiment run entry, responsible for reading data, receiving results, and calculating metrics
+- 'NoNameFramework_CGAutoMerge.py': Experiment framework flow code
+- 'NoNameModel2.py': Specific model structure code
+- 'graph_function.py', utils.py: Various function scripts
+- 'requirements.txt': Experimental Environment Configuration Information
 
 ## Quick Start & Usage
 To reproduce the experimental results on the Splatter simulated dataset, please follow the steps below:
