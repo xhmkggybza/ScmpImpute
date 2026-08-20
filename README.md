@@ -28,7 +28,6 @@ Execute the main script to start the training and evaluation process:
 python Main_Splatter1.py
 
 ## requirements:
-'''
 anndata==0.11.4
 
 torch==2.4.0
@@ -63,7 +62,6 @@ h5py==3.15.1
 
 networkx==3.3
 
-'''
 
 
 
