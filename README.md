@@ -13,7 +13,7 @@ many state-of-the-art scRNA-seq imputation methods in terms of both quantitative
 - 'Main_Splatter1.py': The experiment run entry, responsible for reading data, receiving results, and calculating metrics
 - 'NoNameFramework_CGAutoMerge.py': Experiment framework flow code
 - 'NoNameModel2.py': Specific model structure code
-- 'graph_function.py', utils.py: Various function scripts
+- 'graph_function.py', 'utils.py': Various function scripts
 - 'requirements.txt': Experimental Environment Configuration Information
 
 ## Quick Start & Usage
@@ -26,8 +26,8 @@ Unzip the example dataset `Splatter1.zip` into the root directory of this reposi
 Execute the main script to start the training and evaluation process:
 python Main_Splatter1.py
 
-requirements:
-absl-py==2.1.0
+## requirements:
+'''absl-py==2.1.0
 aiofiles==25.1.0
 aiohttp @ file:///rapids/aiohttp-3.9.5-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl#sha256=c26959ca7b75ff768e2776d8055bf9582a6267e24556bb7f7bd29e677932be72
 aiosignal @ file:///rapids/aiosignal-1.3.1-py3-none-any.whl#sha256=f8376fb07dd1e86a584e4fcdec80b36b7f81aac666ebc724e2c090300dd83b17
@@ -334,7 +334,7 @@ xgboost @ file:///rapids/xgboost-2.0.3-py3-none-linux_x86_64.whl#sha256=b0e69279
 yarl @ file:///rapids/yarl-1.9.4-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl#sha256=357495293086c5b6d34ca9616a43d329317feab7917518bc97a08f9e55648455
 zarr @ file:///rapids/zarr-2.18.2-py3-none-any.whl#sha256=a638754902f97efa99b406083fdc807a0e2ccf12a949117389d2a4ba9b05df38
 zict @ file:///rapids/zict-3.0.0-py2.py3-none-any.whl#sha256=5796e36bd0e0cc8cf0fbc1ace6a68912611c1dbd74750a3f3026b9b9d6a327ae
-zipp @ file:///rapids/zipp-3.19.0-py3-none-any.whl#sha256=96dc6ad62f1441bcaccef23b274ec471518daf4fbbc580341204936a5a3dddec
+zipp @ file:///rapids/zipp-3.19.0-py3-none-any.whl#sha256=96dc6ad62f1441bcaccef23b274ec471518daf4fbbc580341204936a5a3dddec'''
 
 
 
