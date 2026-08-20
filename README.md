@@ -6,10 +6,17 @@ features of scRNA-seq data. Meanwhile, extensive correlations among cells and ge
 global structural features of scRNA-seq data. Moreover, we quantify the relative contribution of the global prior and local details for each cell, enabling
 a cell-specific optimal trade-off to generate the final imputed matrix. Experimental results demonstrate that the proposed ScmpImpute outperforms
 many state-of-the-art scRNA-seq imputation methods in terms of both quantitative evaluation metrics and downstream analysis performance.
+## Workflow
+<img width="8192" height="8192" alt="Figure_1" src="https://github.com/user-attachments/assets/b7465530-f3e0-4d46-adb7-ff4f5c8a43f5" />
 
+## Script introduction
+Main_Splatter1.py: The experiment run entry, responsible for reading data, receiving results, and calculating metrics
+NoNameFramework_CGAutoMerge.py: Experiment framework flow code
+NoNameModel2.py: Specific model structure code
+graph_function.py, utils.py: Various function scripts
+requirements.txt: Experimental Environment Configuration Information
 
-Quick Start & Usage
-
+## Quick Start & Usage
 To reproduce the experimental results on the Splatter simulated dataset, please follow the steps below:
 
 ### 1. Prepare the Dataset
