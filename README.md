@@ -28,7 +28,7 @@ Execute the main script to start the training and evaluation process:
 python Main_Splatter1.py
 
 ## requirements:
-'''
+'''text
 absl-py==2.1.0
 aiofiles==25.1.0
 aiohttp @ file:///rapids/aiohttp-3.9.5-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl#sha256=c26959ca7b75ff768e2776d8055bf9582a6267e24556bb7f7bd29e677932be72
