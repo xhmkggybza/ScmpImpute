@@ -30,24 +30,39 @@ python Main_Splatter1.py
 ## requirements:
 '''text
 anndata==0.11.4
+
 torch==2.4.0
-torchvision
-torchaudio
+
 scanpy==1.11.5
+
 scvi-tools==1.3.3
+
 scikit-learn==1.7.2
+
 scipy==1.13.1
+
 numpy==1.26.4
+
 pandas==2.2.1
+
 matplotlib==3.9.0
+
 seaborn==0.13.2
+
 umap-learn==0.5.9.post2
+
 pynndescent==0.5.13
+
 igraph==1.0.0
+
 leidenalg==0.11.0
+
 tqdm==4.66.4
+
 h5py==3.15.1
+
 networkx==3.3
+
 '''
 
 
