@@ -28,7 +28,7 @@ Execute the main script to start the training and evaluation process:
 python Main_Splatter1.py
 
 ## requirements:
-'''
+'''text
 anndata==0.11.4
 torch==2.4.0
 torchvision
