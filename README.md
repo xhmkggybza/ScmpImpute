@@ -1,3 +1,4 @@
+## Abstract
 Recent advances have suggested that single-cell RNA sequencing (scRNAseq) methods show great potential for studying cellular heterogeneity with
 unprecedented resolution. However, such methods still suffer from high sparsity, which introduces unique challenges for data analysis. To address
 these challenges, we propose a novel cell-specific adaptive dropout imputation framework, termed ScmpImpute, which leverages both local and global
@@ -27,7 +28,8 @@ Execute the main script to start the training and evaluation process:
 python Main_Splatter1.py
 
 ## requirements:
-'''absl-py==2.1.0
+'''
+absl-py==2.1.0
 aiofiles==25.1.0
 aiohttp @ file:///rapids/aiohttp-3.9.5-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl#sha256=c26959ca7b75ff768e2776d8055bf9582a6267e24556bb7f7bd29e677932be72
 aiosignal @ file:///rapids/aiosignal-1.3.1-py3-none-any.whl#sha256=f8376fb07dd1e86a584e4fcdec80b36b7f81aac666ebc724e2c090300dd83b17
@@ -334,7 +336,8 @@ xgboost @ file:///rapids/xgboost-2.0.3-py3-none-linux_x86_64.whl#sha256=b0e69279
 yarl @ file:///rapids/yarl-1.9.4-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl#sha256=357495293086c5b6d34ca9616a43d329317feab7917518bc97a08f9e55648455
 zarr @ file:///rapids/zarr-2.18.2-py3-none-any.whl#sha256=a638754902f97efa99b406083fdc807a0e2ccf12a949117389d2a4ba9b05df38
 zict @ file:///rapids/zict-3.0.0-py2.py3-none-any.whl#sha256=5796e36bd0e0cc8cf0fbc1ace6a68912611c1dbd74750a3f3026b9b9d6a327ae
-zipp @ file:///rapids/zipp-3.19.0-py3-none-any.whl#sha256=96dc6ad62f1441bcaccef23b274ec471518daf4fbbc580341204936a5a3dddec'''
+zipp @ file:///rapids/zipp-3.19.0-py3-none-any.whl#sha256=96dc6ad62f1441bcaccef23b274ec471518daf4fbbc580341204936a5a3dddec
+'''
 
 
 
